@@ -1,5 +1,6 @@
 import open from 'open'
+import { INKDROP_ACCESS_KEY_URI } from './consts'
 
 export function main() {
-  open('inkdrop://plugin/vim')
+  open(INKDROP_ACCESS_KEY_URI)
 }
