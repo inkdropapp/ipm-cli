@@ -1,6 +1,7 @@
 import chalk from 'chalk'
 import { Command } from 'commander'
 import { getAccessToken, openAccessKeyPage, saveAccessToken } from './auth.js'
+import { INKDROP_ACCESS_KEY_URI } from './consts.js'
 import { prompt } from './input.js'
 import { getIPM } from './ipm.js'
 
@@ -26,6 +27,10 @@ async function configure() {
   // Open the desktop app to display the access key
   console.log(
     chalk.cyan('Opening Inkdrop desktop app to display your access key...')
+  )
+  console.log(chalk.underline(INKDROP_ACCESS_KEY_URI))
+  console.log(
+    `If it doesn't open automatically, run the command ${chalk.bold('application:display-access-key')} in the Inkdrop app.`
   )
   await openAccessKeyPage()
 
@@ -293,7 +298,9 @@ export async function main() {
       try {
         const pathStr = path ? ` from ${path}` : ''
         if (options.dryRun) {
-          console.log(chalk.cyan(`Running publish in dry-run mode${pathStr}...`))
+          console.log(
+            chalk.cyan(`Running publish in dry-run mode${pathStr}...`)
+          )
         } else {
           console.log(chalk.cyan(`Publishing package${pathStr}...`))
         }
