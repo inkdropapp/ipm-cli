@@ -1,29 +1,29 @@
 import { Command } from 'commander'
 import { getAccessToken, openAccessKeyPage, saveAccessToken } from './auth.js'
 import { prompt } from './input.js'
-import { logger } from './logger.js'
+import { getIPM } from './ipm.js'
 
 /**
  * Configure the CLI tool by authenticating with the Inkdrop service
  */
 async function configure() {
-  logger.info('Configuring Inkdrop CLI...\n')
+  console.log('Configuring Inkdrop CLI...\n')
 
   // Check if already authenticated
   const existingToken = getAccessToken()
   if (existingToken) {
-    logger.info('✓ You are already authenticated.')
+    console.log('✓ You are already authenticated.')
     const answer = await prompt(
       'Do you want to reconfigure with a new access token? (y/N): '
     )
     if (answer.toLowerCase() !== 'y' && answer.toLowerCase() !== 'yes') {
-      logger.info('Configuration cancelled.')
+      console.log('Configuration cancelled.')
       return
     }
   }
 
   // Open the desktop app to display the access key
-  logger.info('Opening Inkdrop desktop app to display your access key...')
+  console.log('Opening Inkdrop desktop app to display your access key...')
   await openAccessKeyPage()
 
   // Prompt for the access token
@@ -32,17 +32,17 @@ async function configure() {
   )
 
   if (!token) {
-    logger.error('Error: Access token cannot be empty.')
+    console.error('Error: Access token cannot be empty.')
     process.exit(1)
   }
 
   // Save the token
   try {
     saveAccessToken(token)
-    logger.info('\n✓ Access token saved successfully!')
-    logger.info('You can now use the Inkdrop CLI.')
+    console.log('\n✓ Access token saved successfully!')
+    console.log('You can now use the Inkdrop CLI.')
   } catch (error) {
-    logger.error('Error saving access token:', error)
+    console.error('Error saving access token:', error)
     process.exit(1)
   }
 }
@@ -53,7 +53,7 @@ async function configure() {
 export async function ensureAuthenticated() {
   const token = getAccessToken()
   if (!token) {
-    logger.info('You are not authenticated yet.')
+    console.log('You are not authenticated yet.')
     await configure()
   }
   return getAccessToken()
@@ -80,26 +80,25 @@ export async function main() {
     .description('List installed packages')
     .action(async () => {
       await ensureAuthenticated()
-      const { getIPM } = await import('./ipm.js')
       const ipm = getIPM()
 
       try {
-        logger.info('Fetching installed packages...')
+        console.log('Fetching installed packages...')
         const packages = await ipm.getInstalled()
 
         if (packages.length === 0) {
-          logger.info('No packages installed.')
+          console.log('No packages installed.')
           return
         }
 
-        logger.info(`\nInstalled packages (${packages.length}):\n`)
+        console.log(`\nInstalled packages (${packages.length}):\n`)
         for (const pkg of packages) {
-          logger.info(
+          console.log(
             `  ${pkg.name}@${pkg.version}${pkg.description ? ` - ${pkg.description}` : ''}`
           )
         }
       } catch (error) {
-        logger.error('Failed to fetch installed packages:', error)
+        console.error('Failed to fetch installed packages:', error)
         process.exit(1)
       }
     })
@@ -109,24 +108,23 @@ export async function main() {
     .description('List outdated packages')
     .action(async () => {
       await ensureAuthenticated()
-      const { getIPM } = await import('./ipm.js')
       const ipm = getIPM()
 
       try {
-        logger.info('Checking for outdated packages...')
+        console.log('Checking for outdated packages...')
         const outdated = await ipm.getOutdated()
 
         if (outdated.length === 0) {
-          logger.info('All packages are up to date.')
+          console.log('All packages are up to date.')
           return
         }
 
-        logger.info(`\nOutdated packages (${outdated.length}):\n`)
+        console.log(`\nOutdated packages (${outdated.length}):\n`)
         for (const pkg of outdated) {
-          logger.info(`  ${pkg.name}: ${pkg.version} → ${pkg.latestVersion}`)
+          console.log(`  ${pkg.name}: ${pkg.version} → ${pkg.latestVersion}`)
         }
       } catch (error) {
-        logger.error('Failed to check outdated packages:', error)
+        console.error('Failed to check outdated packages:', error)
         process.exit(1)
       }
     })
@@ -137,16 +135,15 @@ export async function main() {
     .option('-v, --version <version>', 'Specific version to install')
     .action(async (packageName: string, options: { version?: string }) => {
       await ensureAuthenticated()
-      const { getIPM } = await import('./ipm.js')
       const ipm = getIPM()
 
       try {
         const versionStr = options.version ? `@${options.version}` : ''
-        logger.info(`Installing ${packageName}${versionStr}...`)
+        console.log(`Installing ${packageName}${versionStr}...`)
         await ipm.install(packageName, options.version)
-        logger.info(`✓ Successfully installed ${packageName}${versionStr}`)
+        console.log(`✓ Successfully installed ${packageName}${versionStr}`)
       } catch (error) {
-        logger.error(`Failed to install ${packageName}:`, error)
+        console.error(`Failed to install ${packageName}:`, error)
         process.exit(1)
       }
     })
@@ -157,16 +154,15 @@ export async function main() {
     .option('-v, --version <version>', 'Specific version to update to')
     .action(async (packageName: string, options: { version?: string }) => {
       await ensureAuthenticated()
-      const { getIPM } = await import('./ipm.js')
       const ipm = getIPM()
 
       try {
         const versionStr = options.version ? `@${options.version}` : ''
-        logger.info(`Updating ${packageName}${versionStr}...`)
+        console.log(`Updating ${packageName}${versionStr}...`)
         await ipm.update(packageName, options.version)
-        logger.info(`✓ Successfully updated ${packageName}${versionStr}`)
+        console.log(`✓ Successfully updated ${packageName}${versionStr}`)
       } catch (error) {
-        logger.error(`Failed to update ${packageName}:`, error)
+        console.error(`Failed to update ${packageName}:`, error)
         process.exit(1)
       }
     })
@@ -177,19 +173,18 @@ export async function main() {
     .description('Uninstall a package')
     .action(async (packageName: string) => {
       await ensureAuthenticated()
-      const { getIPM } = await import('./ipm.js')
       const ipm = getIPM()
 
       try {
-        logger.info(`Uninstalling ${packageName}...`)
+        console.log(`Uninstalling ${packageName}...`)
         const result = await ipm.uninstall(packageName)
         if (result) {
-          logger.info(`✓ Successfully uninstalled ${packageName}`)
+          console.log(`✓ Successfully uninstalled ${packageName}`)
         } else {
-          logger.warn(`Package ${packageName} was not installed`)
+          console.warn(`Package ${packageName} was not installed`)
         }
       } catch (error) {
-        logger.error(`Failed to uninstall ${packageName}:`, error)
+        console.error(`Failed to uninstall ${packageName}:`, error)
         process.exit(1)
       }
     })
@@ -205,11 +200,10 @@ export async function main() {
     .action(
       async (query: string, options: { sort?: string; direction?: string }) => {
         await ensureAuthenticated()
-        const { getIPM } = await import('./ipm.js')
         const ipm = getIPM()
 
         try {
-          logger.info(`Searching for "${query}"...`)
+          console.log(`Searching for "${query}"...`)
           const results = await ipm.registry.search({
             q: query,
             sort: options.sort as any,
@@ -217,21 +211,21 @@ export async function main() {
           })
 
           if (results.length === 0) {
-            logger.info('No packages found.')
+            console.log('No packages found.')
             return
           }
 
-          logger.info(`\nFound ${results.length} package(s):\n`)
+          console.log(`\nFound ${results.length} package(s):\n`)
           for (const pkg of results) {
-            logger.info(`  ${pkg.name} (v${pkg.releases.latest})`)
+            console.log(`  ${pkg.name} (v${pkg.releases.latest})`)
             if (pkg.metadata.description) {
-              logger.info(`    ${pkg.metadata.description}`)
+              console.log(`    ${pkg.metadata.description}`)
             }
-            logger.info(`    Downloads: ${pkg.downloads}`)
-            logger.info('')
+            console.log(`    Downloads: ${pkg.downloads}`)
+            console.log('')
           }
         } catch (error) {
-          logger.error('Search failed:', error)
+          console.error('Search failed:', error)
           process.exit(1)
         }
       }
@@ -242,33 +236,32 @@ export async function main() {
     .description('Show package information')
     .action(async (packageName: string) => {
       await ensureAuthenticated()
-      const { getIPM } = await import('./ipm.js')
       const ipm = getIPM()
 
       try {
-        logger.info(`Fetching information for ${packageName}...`)
+        console.log(`Fetching information for ${packageName}...`)
         const info = await ipm.registry.getPackageInfo(packageName)
 
-        logger.info(`\nPackage: ${info.name}`)
-        logger.info(`Latest version: ${info.releases.latest}`)
+        console.log(`\nPackage: ${info.name}`)
+        console.log(`Latest version: ${info.releases.latest}`)
         if (info.metadata.description) {
-          logger.info(`Description: ${info.metadata.description}`)
+          console.log(`Description: ${info.metadata.description}`)
         }
         if (info.repository) {
-          logger.info(`Repository: ${info.repository}`)
+          console.log(`Repository: ${info.repository}`)
         }
         if (info.metadata.license) {
-          logger.info(`License: ${info.metadata.license}`)
+          console.log(`License: ${info.metadata.license}`)
         }
-        logger.info(`Downloads: ${info.downloads}`)
+        console.log(`Downloads: ${info.downloads}`)
         if (info.metadata.keywords && info.metadata.keywords.length > 0) {
-          logger.info(`Keywords: ${info.metadata.keywords.join(', ')}`)
+          console.log(`Keywords: ${info.metadata.keywords.join(', ')}`)
         }
         if (info.metadata.engines?.inkdrop) {
-          logger.info(`Inkdrop version: ${info.metadata.engines.inkdrop}`)
+          console.log(`Inkdrop version: ${info.metadata.engines.inkdrop}`)
         }
       } catch (error) {
-        logger.error(`Failed to fetch package info:`, error)
+        console.error(`Failed to fetch package info:`, error)
         process.exit(1)
       }
     })
