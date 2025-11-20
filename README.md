@@ -52,7 +52,11 @@ ipm install <package-name>
 # or
 ipm i <package-name>
 
-# Install specific version
+# Install specific version (package@version format)
+ipm install <package-name>@1.2.3
+ipm i <package-name>@1.2.3
+
+# Install specific version (--version flag)
 ipm install <package-name> --version 1.2.3
 # or
 ipm i <package-name> -v 1.2.3
@@ -64,7 +68,10 @@ ipm i <package-name> -v 1.2.3
 # Update to latest version
 ipm update <package-name>
 
-# Update to specific version
+# Update to specific version (package@version format)
+ipm update <package-name>@1.2.3
+
+# Update to specific version (--version flag)
 ipm update <package-name> --version 1.2.3
 # or
 ipm update <package-name> -v 1.2.3

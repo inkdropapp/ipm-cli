@@ -140,7 +140,7 @@ export async function main() {
     })
 
   program
-    .command('install <package>')
+    .command('install <package[@version]>')
     .alias('i')
     .description('Install a package')
     .option('-v, --version <version>', 'Specific version to install')
@@ -149,11 +149,21 @@ export async function main() {
       const ipm = getIPM()
 
       try {
-        const versionStr = options.version ? `@${options.version}` : ''
-        console.log(chalk.cyan(`Installing ${packageName}${versionStr}...`))
-        await ipm.install(packageName, options.version)
+        // Parse package@version format
+        let name = packageName
+        let version = options.version
+
+        if (packageName.includes('@')) {
+          const parts = packageName.split('@')
+          name = parts[0]
+          version = parts[1] || version
+        }
+
+        const versionStr = version ? `@${version}` : ''
+        console.log(chalk.cyan(`Installing ${name}${versionStr}...`))
+        await ipm.install(name, version)
         console.log(
-          chalk.green(`✓ Successfully installed ${packageName}${versionStr}`)
+          chalk.green(`✓ Successfully installed ${name}${versionStr}`)
         )
       } catch (error) {
         console.error(chalk.red(`Failed to install ${packageName}:`), error)
@@ -162,7 +172,7 @@ export async function main() {
     })
 
   program
-    .command('update <package>')
+    .command('update <package[@version]>')
     .description('Update a package')
     .option('-v, --version <version>', 'Specific version to update to')
     .action(async (packageName: string, options: { version?: string }) => {
@@ -170,12 +180,20 @@ export async function main() {
       const ipm = getIPM()
 
       try {
-        const versionStr = options.version ? `@${options.version}` : ''
-        console.log(chalk.cyan(`Updating ${packageName}${versionStr}...`))
-        await ipm.update(packageName, options.version)
-        console.log(
-          chalk.green(`✓ Successfully updated ${packageName}${versionStr}`)
-        )
+        // Parse package@version format
+        let name = packageName
+        let version = options.version
+
+        if (packageName.includes('@')) {
+          const parts = packageName.split('@')
+          name = parts[0]
+          version = parts[1] || version
+        }
+
+        const versionStr = version ? `@${version}` : ''
+        console.log(chalk.cyan(`Updating ${name}${versionStr}...`))
+        await ipm.update(name, version)
+        console.log(chalk.green(`✓ Successfully updated ${name}${versionStr}`))
       } catch (error) {
         console.error(chalk.red(`Failed to update ${packageName}:`), error)
         process.exit(1)
