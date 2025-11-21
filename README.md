@@ -131,6 +131,14 @@ ipm publish --dry-run
 ipm publish ./path/to/package --dry-run
 ```
 
+It is recommended to use [`npm version`](https://docs.npmjs.com/cli/v11/commands/npm-version) to bump the package version before publishing. For example:
+
+```bash
+# Bump up the patch version
+npm version patch
+ipm publish
+```
+
 #### Unpublish a package
 
 ```bash
@@ -236,6 +244,12 @@ npm run format
 
 # Type checking
 npm run typecheck
+```
+
+### Testing a command manually
+
+```bash
+dotenv run ./bin/cli.js <command> [options]
 ```
 
 ## How It Works
