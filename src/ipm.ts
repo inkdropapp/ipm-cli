@@ -9,7 +9,7 @@ export function getIPM(): IPM {
   const accessKey = getAccessToken()
 
   const ipm = new IPM({
-    appVersion: INKDROP_VERSIOON, // You may want to make this configurable
+    appVersion: process.env.INKDROP_VERSION || INKDROP_VERSIOON, // You may want to make this configurable
     accessKeyId: accessKey?.accessKeyId,
     secretAccessKey: accessKey?.secretAccessKey
   })
