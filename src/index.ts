@@ -1,9 +1,17 @@
+import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import chalk from 'chalk'
 import { Command } from 'commander'
 import { getAccessToken, openAccessKeyPage, saveAccessToken } from './auth.js'
 import { INKDROP_ACCESS_KEY_URI } from './consts.js'
 import { prompt } from './input.js'
 import { getIPM } from './ipm.js'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const pkg = JSON.parse(
+  readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'),
+) as { version: string }
 
 /**
  * Configure the CLI tool by authenticating with the Inkdrop service
@@ -73,7 +81,7 @@ export async function main() {
   program
     .name('ipm')
     .description('Inkdrop Plugin Manager - Manage your Inkdrop plugins')
-    .version('0.1.0')
+    .version(pkg.version)
 
   program
     .command('configure')
