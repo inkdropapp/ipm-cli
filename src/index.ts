@@ -10,7 +10,7 @@ import { getIPM } from './ipm.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkg = JSON.parse(
-  readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'),
+  readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8')
 ) as { version: string }
 
 /**
@@ -233,9 +233,7 @@ export async function main() {
   program
     .command('link [package_path]')
     .alias('ln')
-    .description(
-      'Create a symlink for the package in the packages directory'
-    )
+    .description('Create a symlink for the package in the packages directory')
     .option('-d, --dev', 'Link to dev/packages for development')
     .option('-n, --name <name>', 'Override the package name')
     .action(
