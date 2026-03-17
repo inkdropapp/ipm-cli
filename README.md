@@ -85,6 +85,33 @@ ipm uninstall <package-name>
 ipm remove <package-name>
 ```
 
+#### Link a package for development
+
+```bash
+# Link current directory
+ipm link
+# or
+ipm ln
+
+# Link a specific directory
+ipm link ./path/to/package
+
+# Link to dev/packages (for plugin development)
+ipm link --dev
+# or
+ipm link -d
+
+# Link with a custom package name
+ipm link --name my-plugin
+# or
+ipm link -n my-plugin
+
+# Combine options
+ipm link ./path/to/package -d -n my-plugin
+```
+
+Creates a symlink from the Inkdrop packages directory to a local package directory, enabling local plugin development. The `--dev` flag links to `dev/packages` instead of `packages`, which is useful for developing plugins without affecting your stable setup. The package name is read from `package.json` in the linked directory, or falls back to the directory name.
+
 #### Search for packages
 
 ```bash

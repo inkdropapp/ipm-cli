@@ -231,6 +231,37 @@ export async function main() {
     })
 
   program
+    .command('link [package_path]')
+    .alias('ln')
+    .description(
+      'Create a symlink for the package in the packages directory'
+    )
+    .option('-d, --dev', 'Link to dev/packages for development')
+    .option('-n, --name <name>', 'Override the package name')
+    .action(
+      async (
+        packagePath: string | undefined,
+        options: { dev?: boolean; name?: string }
+      ) => {
+        await ensureAuthenticated()
+        const ipm = getIPM()
+
+        try {
+          const sourcePath = packagePath || '.'
+          console.log(chalk.cyan(`Linking ${sourcePath}...`))
+          const targetPath = await ipm.link(sourcePath, {
+            dev: options.dev,
+            name: options.name
+          })
+          console.log(chalk.green(`✓ ${targetPath}`))
+        } catch (error) {
+          console.error(chalk.red('Failed to link package:'), error)
+          process.exit(1)
+        }
+      }
+    )
+
+  program
     .command('search <query>')
     .description('Search for packages')
     .option(
