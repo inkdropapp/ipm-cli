@@ -1,5 +1,4 @@
-import { defineConfig } from 'tsup'
-import pkg from './package.json' with { type: 'json' }
+import { defineConfig } from 'tsdown'
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -7,7 +6,6 @@ export default defineConfig({
   dts: true,
   clean: true,
   outDir: 'lib',
-  external: Object.keys(pkg.dependencies || {}),
   target: 'es2024',
   minify: false,
   sourcemap: false
