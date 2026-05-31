@@ -7,6 +7,7 @@ import { getAccessToken, openAccessKeyPage, saveAccessToken } from './auth.js'
 import { INKDROP_ACCESS_KEY_URI } from './consts.js'
 import { prompt } from './input.js'
 import { getIPM } from './ipm.js'
+import { runPrepublishOnly } from './utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkg = JSON.parse(
@@ -359,6 +360,8 @@ export async function main() {
         } else {
           console.log(chalk.cyan(`Publishing package${pathStr}...`))
         }
+
+        runPrepublishOnly(path)
 
         // Type assertion needed as the type definition is outdated but the README shows path is supported
         await ipm.publish({ dryrun: options.dryRun || false, path } as any)
