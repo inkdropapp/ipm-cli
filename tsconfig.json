@@ -7,7 +7,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     /* Module resolution */
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -21,8 +21,7 @@
     "noUnusedLocals": false,
     "noImplicitAny": false,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./" /* Base directory to resolve non-absolute module names. */
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "tests"],
   "exclude": ["lib/**/*"]
