@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
 import chalk from 'chalk'
 import { Command } from 'commander'
+
 import { getAccessToken, openAccessKeyPage, saveAccessToken } from './auth.js'
 import { INKDROP_ACCESS_KEY_URI } from './consts.js'
 import { prompt } from './input.js'
@@ -10,9 +12,9 @@ import { getIPM } from './ipm.js'
 import { runPrepublishOnly } from './utils.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const pkg = JSON.parse(
-  readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8')
-) as { version: string }
+const pkg = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8')) as {
+  version: string
+}
 
 /**
  * Configure the CLI tool by authenticating with the Inkdrop service
@@ -24,9 +26,7 @@ async function configure() {
   const existingToken = getAccessToken()
   if (existingToken) {
     console.log(chalk.green('✓ You are already authenticated.'))
-    const answer = await prompt(
-      'Do you want to reconfigure with a new access token? (y/N): '
-    )
+    const answer = await prompt('Do you want to reconfigure with a new access token? (y/N): ')
     if (answer.toLowerCase() !== 'y' && answer.toLowerCase() !== 'yes') {
       console.log(chalk.yellow('Configuration cancelled.'))
       return
@@ -34,9 +34,7 @@ async function configure() {
   }
 
   // Open the desktop app to display the access key
-  console.log(
-    chalk.cyan('Opening Inkdrop desktop app to display your access key...')
-  )
+  console.log(chalk.cyan('Opening Inkdrop desktop app to display your access key...'))
   console.log(chalk.underline(INKDROP_ACCESS_KEY_URI))
   console.log(
     `If it doesn't open automatically, run the command ${chalk.bold('application:display-access-key')} in the Inkdrop app.`
@@ -44,9 +42,7 @@ async function configure() {
   await openAccessKeyPage()
 
   // Prompt for the access token
-  const token = await prompt(
-    '\nPlease paste your access token from the desktop app: '
-  )
+  const token = await prompt('\nPlease paste your access token from the desktop app: ')
 
   if (!token) {
     console.error(chalk.red('Error: Access token cannot be empty.'))
@@ -171,9 +167,7 @@ export async function main() {
         const versionStr = version ? `@${version}` : ''
         console.log(chalk.cyan(`Installing ${name}${versionStr}...`))
         await ipm.install(name, version)
-        console.log(
-          chalk.green(`✓ Successfully installed ${name}${versionStr}`)
-        )
+        console.log(chalk.green(`✓ Successfully installed ${name}${versionStr}`))
       } catch (error) {
         console.error(chalk.red(`Failed to install ${packageName}:`), error)
         process.exit(1)
@@ -237,77 +231,65 @@ export async function main() {
     .description('Create a symlink for the package in the packages directory')
     .option('-d, --dev', 'Link to dev/packages for development')
     .option('-n, --name <name>', 'Override the package name')
-    .action(
-      async (
-        packagePath: string | undefined,
-        options: { dev?: boolean; name?: string }
-      ) => {
-        await ensureAuthenticated()
-        const ipm = getIPM()
+    .action(async (packagePath: string | undefined, options: { dev?: boolean; name?: string }) => {
+      await ensureAuthenticated()
+      const ipm = getIPM()
 
-        try {
-          const sourcePath = packagePath || '.'
-          console.log(chalk.cyan(`Linking ${sourcePath}...`))
-          const targetPath = await ipm.link(sourcePath, {
-            dev: options.dev,
-            name: options.name
-          })
-          console.log(chalk.green(`✓ ${targetPath}`))
-        } catch (error) {
-          console.error(chalk.red('Failed to link package:'), error)
-          process.exit(1)
-        }
+      try {
+        const sourcePath = packagePath || '.'
+        console.log(chalk.cyan(`Linking ${sourcePath}...`))
+        const targetPath = await ipm.link(sourcePath, {
+          dev: options.dev,
+          name: options.name
+        })
+        console.log(chalk.green(`✓ ${targetPath}`))
+      } catch (error) {
+        console.error(chalk.red('Failed to link package:'), error)
+        process.exit(1)
       }
-    )
+    })
 
   program
     .command('search <query>')
     .description('Search for packages')
-    .option(
-      '-s, --sort <sort>',
-      'Sort order (score, majority, recency, newness)'
-    )
+    .option('-s, --sort <sort>', 'Sort order (score, majority, recency, newness)')
     .option('-d, --direction <direction>', 'Sort direction (asc, desc)')
-    .action(
-      async (query: string, options: { sort?: string; direction?: string }) => {
-        await ensureAuthenticated()
-        const ipm = getIPM()
+    .action(async (query: string, options: { sort?: string; direction?: string }) => {
+      await ensureAuthenticated()
+      const ipm = getIPM()
 
-        try {
-          console.log(chalk.cyan(`Searching for "${query}"...`))
-          const results = await ipm.registry.search({
-            q: query,
-            sort: options.sort as any,
-            direction: options.direction
-          })
+      try {
+        console.log(chalk.cyan(`Searching for "${query}"...`))
+        const results = await ipm.registry.search({
+          q: query,
+          sort: options.sort as any,
+          direction: options.direction
+        })
 
-          if (results.length === 0) {
-            console.log(chalk.yellow('No packages found.'))
-            return
-          }
-
-          console.log(chalk.bold(`\nFound ${results.length} package(s):\n`))
-          for (const pkg of results) {
-            console.log(
-              `└── ${chalk.cyan(pkg.name)} ${chalk.gray(`(v${pkg.releases.latest})`)}`
-            )
-            if (pkg.metadata.description) {
-              console.log(chalk.gray(`    ${pkg.metadata.description}`))
-            }
-            console.log(chalk.gray(`    Downloads: ${pkg.downloads}`))
-            console.log('')
-          }
-          console.log(
-            `Use \`ipm install\` to install them or visit ` +
-              chalk.underline(`https://my.inkdrop.app/plugins`) +
-              ` to read more about them.`
-          )
-        } catch (error) {
-          console.error(chalk.red('Search failed:'), error)
-          process.exit(1)
+        if (results.length === 0) {
+          console.log(chalk.yellow('No packages found.'))
+          return
         }
+
+        console.log(chalk.bold(`\nFound ${results.length} package(s):\n`))
+        for (const pkg of results) {
+          console.log(`└── ${chalk.cyan(pkg.name)} ${chalk.gray(`(v${pkg.releases.latest})`)}`)
+          if (pkg.metadata.description) {
+            console.log(chalk.gray(`    ${pkg.metadata.description}`))
+          }
+          console.log(chalk.gray(`    Downloads: ${pkg.downloads}`))
+          console.log('')
+        }
+        console.log(
+          `Use \`ipm install\` to install them or visit ` +
+            chalk.underline(`https://my.inkdrop.app/plugins`) +
+            ` to read more about them.`
+        )
+      } catch (error) {
+        console.error(chalk.red('Search failed:'), error)
+        process.exit(1)
       }
-    )
+    })
 
   program
     .command('show <package>')
@@ -330,9 +312,7 @@ export async function main() {
         }
         console.log(`├── Downloads: ${chalk.yellow(info.downloads.toString())}`)
         if (info.metadata.engines?.inkdrop) {
-          console.log(
-            `└── Supported Inkdrop version: ${info.metadata.engines.inkdrop}`
-          )
+          console.log(`└── Supported Inkdrop version: ${info.metadata.engines.inkdrop}`)
         }
       } catch (error) {
         console.error(chalk.red(`Failed to fetch package info:`), error)
@@ -343,10 +323,7 @@ export async function main() {
   program
     .command('publish [path]')
     .description('Publish a package to the registry')
-    .option(
-      '--dry-run',
-      'Simulate the publish process without actually publishing'
-    )
+    .option('--dry-run', 'Simulate the publish process without actually publishing')
     .action(async (path: string | undefined, options: { dryRun?: boolean }) => {
       await ensureAuthenticated()
       const ipm = getIPM()
@@ -354,9 +331,7 @@ export async function main() {
       try {
         const pathStr = path ? ` from ${path}` : ''
         if (options.dryRun) {
-          console.log(
-            chalk.cyan(`Running publish in dry-run mode${pathStr}...`)
-          )
+          console.log(chalk.cyan(`Running publish in dry-run mode${pathStr}...`))
         } else {
           console.log(chalk.cyan(`Publishing package${pathStr}...`))
         }
@@ -405,23 +380,16 @@ export async function main() {
             `Warning: This will unpublish ${name}${versionStr} (${action}) from the registry.`
           )
         )
-        const confirmation = await prompt(
-          'Are you sure you want to continue? (y/N): '
-        )
+        const confirmation = await prompt('Are you sure you want to continue? (y/N): ')
 
-        if (
-          confirmation.toLowerCase() !== 'y' &&
-          confirmation.toLowerCase() !== 'yes'
-        ) {
+        if (confirmation.toLowerCase() !== 'y' && confirmation.toLowerCase() !== 'yes') {
           console.log(chalk.yellow('Unpublish cancelled.'))
           return
         }
 
         console.log(chalk.cyan(`Unpublishing ${name}${versionStr}...`))
         await ipm.unpublish(name, version ? { version } : undefined)
-        console.log(
-          chalk.green(`✓ Successfully unpublished ${name}${versionStr}`)
-        )
+        console.log(chalk.green(`✓ Successfully unpublished ${name}${versionStr}`))
       } catch (error) {
         console.error(chalk.red(`Failed to unpublish ${packageName}:`), error)
         process.exit(1)

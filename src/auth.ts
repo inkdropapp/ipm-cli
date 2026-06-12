@@ -1,10 +1,7 @@
 import { Entry } from '@napi-rs/keyring'
 import open from 'open'
-import {
-  INKDROP_ACCESS_KEY_URI,
-  KEYRING_ACCOUNT,
-  KEYRING_SERVICE
-} from './consts.js'
+
+import { INKDROP_ACCESS_KEY_URI, KEYRING_ACCOUNT, KEYRING_SERVICE } from './consts.js'
 
 type AccessKey = {
   accessKeyId: string

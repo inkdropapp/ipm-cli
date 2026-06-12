@@ -1,4 +1,5 @@
 import { IPM } from '@inkdropapp/ipm'
+
 import { getAccessToken } from './auth.js'
 import { INKDROP_VERSIOON } from './consts.js'
 
