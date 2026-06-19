@@ -163,6 +163,39 @@ function getTemplatePath(type: TemplateType, customTemplate?: string): string {
 }
 
 /**
+ * The published reference stylesheet for a new syntax theme. Downloaded at
+ * generation time so a fresh theme starts from the same up-to-date example the
+ * `default-light-syntax-theme` repo ships, rather than a stale bundled copy.
+ */
+const SYNTAX_THEME_EXAMPLE_CSS_URL =
+  'https://raw.githubusercontent.com/inkdropapp/default-light-syntax-theme/master/styles/index.css'
+
+/**
+ * Overwrite a freshly-scaffolded syntax theme's `styles/index.css` with the
+ * latest published example. Best-effort: on any network/HTTP error the bundled
+ * template copy is left in place, so `ipm init` still succeeds offline.
+ */
+async function applySyntaxThemeExample(destPath: string): Promise<void> {
+  try {
+    const response = await fetch(SYNTAX_THEME_EXAMPLE_CSS_URL, {
+      signal: AbortSignal.timeout(10_000)
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+    writeFileSync(destPath, await response.text())
+    console.log(chalk.gray('  Fetched the latest syntax theme example → styles/index.css'))
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error)
+    console.log(
+      chalk.yellow(
+        `  Couldn't download the syntax theme example (${reason}); kept the bundled one.`
+      )
+    )
+  }
+}
+
+/**
  * The required name suffix for a theme type (`theme-ui` → `-ui`,
  * `theme-syntax` → `-syntax`, …); `''` for a package, which has none.
  */
@@ -324,6 +357,11 @@ export async function initCommand(options: InitOptions): Promise<void> {
   const targetPath = resolve(name)
   const packageName = basename(targetPath)
 
+  // Only replace the example we're about to write — never a file the user
+  // already has (matching generateFromTemplate's skip-existing behavior).
+  const syntaxCssPath = join(targetPath, 'styles', 'index.css')
+  const syntaxCssPreexisted = type === 'theme-syntax' && existsSync(syntaxCssPath)
+
   try {
     generateFromTemplate(
       targetPath,
@@ -334,6 +372,11 @@ export async function initCommand(options: InitOptions): Promise<void> {
   } catch (error) {
     console.error(chalk.red('Failed to generate scaffolding:'), error)
     process.exit(1)
+  }
+
+  // For syntax themes, prefer the latest published example over the bundled one.
+  if (type === 'theme-syntax' && !syntaxCssPreexisted && !options.template) {
+    await applySyntaxThemeExample(syntaxCssPath)
   }
 
   printNextSteps(type, targetPath, packageName)
