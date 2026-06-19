@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url'
 
 import chalk from 'chalk'
 
+import { createPrompter } from './input.js'
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 /** The scaffolding templates `ipm init` can generate. */
@@ -11,9 +13,17 @@ export const TEMPLATE_TYPES = ['package', 'theme-ui', 'theme-syntax', 'theme-pre
 
 export type TemplateType = (typeof TEMPLATE_TYPES)[number]
 
+/** A playful emoji for each template type, shown in the wizard menu. */
+const TYPE_EMOJI: Record<TemplateType, string> = {
+  package: '🧩',
+  'theme-ui': '🎨',
+  'theme-syntax': '🌈',
+  'theme-preview': '📄'
+}
+
 export interface InitOptions {
-  /** Target directory (defaults to the current working directory). */
-  path?: string
+  /** Package/theme name; a new directory of this name is created in the cwd. */
+  name?: string
   /** Template to generate (defaults to `package`). */
   type?: string
   /** Path to a custom template directory, overriding the built-in one. */
@@ -97,11 +107,15 @@ function listFilesRecursive(root: string): string[] {
  * Copy every file from `templatePath` into `targetPath`, stripping the
  * trailing `.template` suffix, substituting placeholders in both paths and
  * contents, and skipping any destination file that already exists.
+ *
+ * `extraReplacements` maps additional literal tokens to values, applied to
+ * file contents after the built-in placeholders.
  */
 export function generateFromTemplate(
   targetPath: string,
   templatePath: string,
-  packageName: string
+  packageName: string,
+  extraReplacements: Record<string, string> = {}
 ): void {
   if (!existsSync(templatePath)) {
     throw new Error(`Template not found: ${templatePath}`)
@@ -124,10 +138,13 @@ export function generateFromTemplate(
 
     mkdirSync(dirname(destPath), { recursive: true })
     const raw = readFileSync(templateChildPath, 'utf-8')
-    const contents = replaceCurrentYearPlaceholders(
-      replacePackageAuthorPlaceholders(
-        replacePackageNamePlaceholders(raw, packageName),
-        packageAuthor
+    const contents = Object.entries(extraReplacements).reduce(
+      (acc, [token, value]) => acc.split(token).join(value),
+      replaceCurrentYearPlaceholders(
+        replacePackageAuthorPlaceholders(
+          replacePackageNamePlaceholders(raw, packageName),
+          packageAuthor
+        )
       )
     )
     writeFileSync(destPath, contents)
@@ -145,11 +162,19 @@ function getTemplatePath(type: TemplateType, customTemplate?: string): string {
   return resolve(__dirname, '..', 'templates', type)
 }
 
+/**
+ * The required name suffix for a theme type (`theme-ui` → `-ui`,
+ * `theme-syntax` → `-syntax`, …); `''` for a package, which has none.
+ */
+function themeSuffix(type: TemplateType): string {
+  return type === 'package' ? '' : type.slice('theme'.length)
+}
+
 /** Print the type-specific next-steps message after scaffolding. */
 function printNextSteps(type: TemplateType, targetPath: string, packageName: string): void {
-  console.log(chalk.green(`\n✓ Created ${type} "${packageName}" at ${targetPath}\n`))
-  console.log(chalk.bold('Next steps:'))
-  console.log(`  cd ${targetPath}`)
+  console.log(chalk.green(`\n🎉 Created ${type} "${packageName}" at ${targetPath}\n`))
+  console.log(chalk.bold('👉 Next steps:'))
+  console.log(`  cd ${packageName}`)
 
   if (type === 'package') {
     console.log('  npm install')
@@ -164,12 +189,87 @@ function printNextSteps(type: TemplateType, targetPath: string, packageName: str
   }
 }
 
+/** Asks the user a question and resolves with their trimmed answer. */
+type Ask = (question: string) => Promise<string>
+
+/**
+ * Interactively collect a name and type when `ipm init` is run with no name.
+ * Loops until a non-empty name and a valid type are given; an empty type
+ * answer accepts `defaultType`.
+ */
+async function runInitWizard(
+  ask: Ask,
+  defaultType: TemplateType
+): Promise<{ name: string; type: TemplateType }> {
+  console.log(chalk.bold('✨ Create a new Inkdrop package or theme\n'))
+
+  let name = await ask('📝 Name (a ./<name> directory is created here): ')
+  while (!name) {
+    console.log(chalk.yellow('  A name is required.'))
+    name = await ask('Name: ')
+  }
+
+  console.log('\nType:')
+  TEMPLATE_TYPES.forEach((t, i) => {
+    const marker = t === defaultType ? chalk.gray(' (default)') : ''
+    console.log(`  ${i + 1}. ${TYPE_EMOJI[t]} ${t}${marker}`)
+  })
+
+  let type: TemplateType | undefined
+  while (!type) {
+    const answer = await ask(`Choose [1-${TEMPLATE_TYPES.length}]: `)
+    if (!answer) {
+      type = defaultType
+      break
+    }
+    const byIndex = /^\d+$/.test(answer) ? TEMPLATE_TYPES[Number(answer) - 1] : undefined
+    const byName = (TEMPLATE_TYPES as readonly string[]).includes(answer)
+      ? (answer as TemplateType)
+      : undefined
+    type = byIndex ?? byName
+    if (!type) {
+      console.log(chalk.yellow(`  Enter a number 1-${TEMPLATE_TYPES.length} or a type name.`))
+    }
+  }
+
+  return { name, type }
+}
+
+/**
+ * Resolve a UI theme's light/dark appearance: inferred from the name when it
+ * contains `light` or `dark`, otherwise asked interactively (default `light`).
+ */
+async function resolveAppearance(name: string, ask: Ask): Promise<'light' | 'dark'> {
+  if (/\bdark\b/i.test(name)) {
+    return 'dark'
+  }
+  if (/\blight\b/i.test(name)) {
+    return 'light'
+  }
+
+  console.log(`\nAppearance:\n  1. 🌞 light${chalk.gray(' (default)')}\n  2. 🌙 dark`)
+  let appearance: 'light' | 'dark' | undefined
+  while (!appearance) {
+    const answer = (await ask('Choose [1-2]: ')).toLowerCase()
+    if (!answer || answer === '1' || answer === 'light') {
+      appearance = 'light'
+    } else if (answer === '2' || answer === 'dark') {
+      appearance = 'dark'
+    } else {
+      console.log(chalk.yellow('  Enter 1 (light) or 2 (dark).'))
+    }
+  }
+  return appearance
+}
+
 /**
  * Generate code scaffolding for a new Inkdrop package or theme. Writes local
- * files only — no authentication or network access.
+ * files only — no authentication or network access. With no `name`, runs an
+ * interactive wizard to collect the name and type; a UI theme whose name does
+ * not state `light`/`dark` is asked for its appearance.
  */
-export function initCommand(options: InitOptions): void {
-  const type = (options.type ?? 'package') as TemplateType
+export async function initCommand(options: InitOptions): Promise<void> {
+  let type = (options.type ?? 'package') as TemplateType
   if (!TEMPLATE_TYPES.includes(type)) {
     console.error(
       chalk.red(
@@ -179,11 +279,58 @@ export function initCommand(options: InitOptions): void {
     process.exit(1)
   }
 
-  const targetPath = resolve(options.path ?? '.')
+  // One prompter, created on first use and reused for every question, so piped
+  // input isn't dropped between a closed and a reopened readline.
+  let prompter: ReturnType<typeof createPrompter> | undefined
+  const ask: Ask = question => {
+    prompter ??= createPrompter()
+    return prompter.ask(question)
+  }
+
+  let name = options.name?.trim()
+  let appearance: 'light' | 'dark' | undefined
+  try {
+    if (!name) {
+      const answers = await runInitWizard(ask, type)
+      name = answers.name
+      type = answers.type
+    }
+
+    // Themes must carry the matching name suffix (e.g. theme-ui → `-ui`).
+    const suffix = themeSuffix(type)
+    if (suffix && !name.endsWith(suffix)) {
+      name = `${name}${suffix}`
+      console.log(chalk.gray(`Naming it "${name}" — ${type} names end with "${suffix}".`))
+    }
+
+    // UI themes carry a light/dark appearance.
+    if (type === 'theme-ui') {
+      appearance = await resolveAppearance(name, ask)
+    }
+  } finally {
+    prompter?.close()
+  }
+
+  if (!name) {
+    // Unreachable: the option or the wizard always yields a name.
+    console.error(chalk.red('Error: a name is required.'))
+    process.exit(1)
+  }
+
+  const extraReplacements: Record<string, string> = appearance
+    ? { '__theme-appearance__': appearance }
+    : {}
+
+  const targetPath = resolve(name)
   const packageName = basename(targetPath)
 
   try {
-    generateFromTemplate(targetPath, getTemplatePath(type, options.template), packageName)
+    generateFromTemplate(
+      targetPath,
+      getTemplatePath(type, options.template),
+      packageName,
+      extraReplacements
+    )
   } catch (error) {
     console.error(chalk.red('Failed to generate scaffolding:'), error)
     process.exit(1)

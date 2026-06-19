@@ -89,13 +89,13 @@ export async function main() {
     })
 
   program
-    .command('init [path]')
-    .description('Generate scaffolding for a new package or theme')
+    .command('init [name]')
+    .description('Scaffold a new package or theme (omit name for an interactive wizard)')
     .option('-t, --type <type>', 'package | theme-ui | theme-syntax | theme-preview', 'package')
     .option('--template <path>', 'Path to a custom template')
-    .action((path: string | undefined, options: { type: string; template?: string }) => {
+    .action(async (name: string | undefined, options: { type: string; template?: string }) => {
       // `init` only writes local files — no authentication required.
-      initCommand({ path, ...options })
+      await initCommand({ name, ...options })
     })
 
   program
