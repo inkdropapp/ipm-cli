@@ -85,6 +85,43 @@ ipm uninstall <package-name>
 ipm remove <package-name>
 ```
 
+#### Scaffold a new package or theme
+
+```bash
+# Create a plugin in ./my-plugin (default type is `package`)
+ipm init my-plugin
+
+# Create a theme — theme-ui, theme-syntax, or theme-preview
+ipm init my-theme --type theme-ui
+ipm init my-theme -t theme-syntax
+
+# Use a custom template directory
+ipm init my-plugin --template /path/to/template
+
+# Omit the name to launch an interactive wizard
+ipm init
+```
+
+Generates code scaffolding for a new Inkdrop **package** or **theme** in a new `./<name>` directory. No authentication required — it only writes local files.
+
+Types (`-t, --type`):
+
+- `package` (default) — a TypeScript plugin built with [tsdown](https://tsdown.dev/) and typed with [`@inkdropapp/types`](https://github.com/inkdropapp/types).
+- `theme-ui` — a UI (app chrome) theme. Ships `@inkdropapp/theme-dev-helpers`; `ipm publish` runs `generate-palette` to emit `palette.json`.
+- `theme-syntax` — an editor (CodeMirror) syntax theme.
+- `theme-preview` — a Markdown preview theme.
+
+Theme names get the matching suffix automatically (`my-theme --type theme-ui` → `my-theme-ui`). For UI themes, the light/dark appearance is read from the name when it contains `light` or `dark`, otherwise you're asked. Run `ipm init` with no name for an interactive wizard that prompts for the name, type, and (for UI themes) appearance.
+
+Then follow the printed next steps, for example:
+
+```bash
+cd my-plugin
+npm install
+npm run build
+ipm link # symlink into Inkdrop for local testing
+```
+
 #### Link a package for development
 
 ```bash
