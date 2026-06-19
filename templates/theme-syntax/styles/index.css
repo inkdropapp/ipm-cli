@@ -1,0 +1,66 @@
+/*
+ * __package-name__ — Inkdrop syntax (editor) theme for CodeMirror 6 / Lezer.
+ *
+ * The `--editor-*` variables recolor the editor chrome; the `.tok-*` classes
+ * recolor syntax tokens (in both the editor and rendered code blocks).
+ *
+ * Colors reference Inkdrop's built-in design tokens (from @inkdropapp/css):
+ *   var(--color-<hue>-<step>)            e.g. var(--color-green-600)
+ *   hsl(var(--hsl-<hue>-<step>) / <a>)   e.g. hsl(var(--hsl-blue-500) / 20%)
+ * Hues: neutral, slate, gray, red, orange, amber, yellow, lime, green, emerald,
+ * teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose. Steps run
+ * 50 (lightest) → 950 (darkest).
+ */
+:root {
+  --editor-foreground-color: var(--color-neutral-600);
+  --editor-background-color: var(--color-neutral-50);
+  --editor-caret-color: var(--color-neutral-700);
+  --editor-selection-background: hsl(var(--hsl-blue-500) / 20%);
+  --editor-active-line-background-color: hsl(var(--hsl-neutral-500) / 8%);
+}
+
+.cm-editor,
+.mde-preview .codeblock {
+  .tok-keyword {
+    color: var(--color-violet-600);
+  }
+  .tok-name,
+  .tok-property-name {
+    color: var(--color-sky-600);
+  }
+  .tok-variable-name {
+    color: var(--color-neutral-700);
+  }
+  .tok-variable-name.tok-function,
+  .tok-tag-name {
+    color: var(--color-blue-600);
+  }
+  .tok-number,
+  .tok-atom,
+  .tok-bool {
+    color: var(--color-orange-600);
+  }
+  .tok-type-name,
+  .tok-class-name {
+    color: var(--color-amber-600);
+  }
+  .tok-operator {
+    color: var(--color-pink-600);
+  }
+  .tok-string,
+  .tok-regexp {
+    color: var(--color-green-600);
+  }
+  .tok-comment {
+    color: var(--color-neutral-400);
+    font-style: italic;
+  }
+  .tok-heading {
+    color: var(--color-blue-600);
+    font-weight: bold;
+  }
+  .tok-link {
+    color: var(--color-cyan-600);
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,11 @@
+.__package-name__ {
+  /* Your plugin styles go here.
+   *
+   * Reference Inkdrop's built-in design tokens (from @inkdropapp/css) instead of
+   * hard-coded colors so your plugin matches the active theme:
+   *   color: var(--color-blue-500);
+   *   background-color: hsl(var(--hsl-neutral-500) / 8%);
+   * Hues: neutral, red, orange, amber, yellow, lime, green, emerald, teal, cyan,
+   * sky, blue, indigo, violet, purple, fuchsia, pink, rose. Steps: 50–950.
+   */
+}

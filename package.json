@@ -20,7 +20,8 @@
   },
   "files": [
     "bin",
-    "lib"
+    "lib",
+    "templates"
   ],
   "type": "module",
   "main": "lib/index.mjs",

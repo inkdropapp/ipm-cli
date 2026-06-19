@@ -7,6 +7,7 @@ import { Command } from 'commander'
 
 import { getAccessToken, openAccessKeyPage, saveAccessToken } from './auth.js'
 import { INKDROP_ACCESS_KEY_URI } from './consts.js'
+import { initCommand } from './init.js'
 import { prompt } from './input.js'
 import { getIPM } from './ipm.js'
 import { runPrepublishOnly } from './utils.js'
@@ -85,6 +86,16 @@ export async function main() {
     .description('Configure the CLI by setting up authentication')
     .action(async () => {
       await configure()
+    })
+
+  program
+    .command('init [path]')
+    .description('Generate scaffolding for a new package or theme')
+    .option('-t, --type <type>', 'package | theme-ui | theme-syntax | theme-preview', 'package')
+    .option('--template <path>', 'Path to a custom template')
+    .action((path: string | undefined, options: { type: string; template?: string }) => {
+      // `init` only writes local files — no authentication required.
+      initCommand({ path, ...options })
     })
 
   program

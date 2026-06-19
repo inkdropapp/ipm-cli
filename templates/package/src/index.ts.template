@@ -1,0 +1,19 @@
+import type { Environment, IInkdropPlugin } from '@inkdropapp/types'
+import { setEnv } from './env'
+import { __PackageName__MessageDialog } from './__PackageName__MessageDialog'
+
+class InkdropPlugin implements IInkdropPlugin {
+  activate(env: Environment) {
+    setEnv(env)
+    env.components.registerClass(__PackageName__MessageDialog)
+    env.layouts.addComponentToLayout('modals', '__PackageName__MessageDialog')
+  }
+
+  deactivate(env: Environment) {
+    env.layouts.removeComponentFromLayout('modals', '__PackageName__MessageDialog')
+    env.components.deleteClass(__PackageName__MessageDialog)
+    setEnv(undefined)
+  }
+}
+
+export default new InkdropPlugin()
