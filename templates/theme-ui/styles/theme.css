@@ -1,0 +1,44 @@
+/*
+ * __package-name__ — Inkdrop UI theme.
+ *
+ * Override Inkdrop's semantic CSS variables to restyle the app chrome (page,
+ * sidebar, note list, editor, inputs, …).
+ *
+ * The values below reference Inkdrop's built-in design tokens (from
+ * @inkdropapp/css), so your theme stays consistent with the rest of the app:
+ *   var(--color-<hue>-<step>)            e.g. var(--color-blue-500)
+ *   hsl(var(--hsl-<hue>-<step>) / <a>)   e.g. hsl(var(--hsl-neutral-500) / 15%)
+ * Hues: neutral, slate, gray, red, orange, amber, yellow, lime, green, emerald,
+ * teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose. Steps run
+ * 50 (lightest) → 950 (darkest). Swap the tokens below to recolor the theme.
+ *
+ * `ipm publish` runs `generate-palette` (via prepublishOnly) to snapshot the
+ * resolved values into palette.json.
+ */
+:root {
+  /* Brand */
+  --primary-color: var(--color-blue-500);
+
+  /* Page */
+  --page-background: var(--color-neutral-50);
+  --text-color: var(--color-neutral-600);
+
+  /* Links */
+  --link-hover-color: var(--color-blue-700);
+
+  /* Borders — a token with alpha via the --hsl-* companion */
+  --border-color: hsl(var(--hsl-neutral-500) / 15%);
+
+  /* Inputs */
+  --input-background: var(--color-neutral-100);
+  --input-focus-border-color: var(--color-blue-500);
+
+  /* Sidebar */
+  --sidebar-background: var(--color-neutral-100);
+
+  /* Note list */
+  --note-list-bar-background: var(--color-neutral-50);
+
+  /* Editor */
+  --editor-background: var(--color-neutral-50);
+}

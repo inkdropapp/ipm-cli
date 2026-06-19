@@ -1,0 +1,26 @@
+{
+  "context-menu": {
+    ".cm-editor": [
+      {
+        "label": "Toggle __package-name__",
+        "command": "__package-name__:toggle"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Plugins",
+      "submenu": [
+        {
+          "label": "__package-name__",
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "__package-name__:toggle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

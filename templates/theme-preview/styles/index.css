@@ -1,0 +1,37 @@
+/*
+ * __package-name__ — Inkdrop Markdown preview theme.
+ *
+ * Override the `.mde-preview` CSS variables to restyle the rendered preview
+ * (links, code blocks, tables, headings, …).
+ *
+ * Colors reference Inkdrop's built-in design tokens (from @inkdropapp/css):
+ *   var(--color-<hue>-<step>)            e.g. var(--color-blue-600)
+ *   hsl(var(--hsl-<hue>-<step>) / <a>)   e.g. hsl(var(--hsl-neutral-500) / 8%)
+ * Hues: neutral, slate, gray, red, orange, amber, yellow, lime, green, emerald,
+ * teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose. Steps run
+ * 50 (lightest) → 950 (darkest).
+ */
+.mde-preview {
+  /* Links */
+  --mde-preview-link-color: var(--color-blue-600);
+
+  /* Code blocks */
+  --mde-preview-codeblock-background-color: hsl(var(--hsl-neutral-500) / 8%);
+  --mde-preview-codeblock-meta-background-color: var(--color-neutral-100);
+  --mde-preview-inline-code-text-color: var(--color-pink-600);
+  --mde-preview-inline-code-background-color: hsl(var(--hsl-neutral-500) / 8%);
+
+  /* Tables */
+  --mde-preview-table-head-text-color: var(--color-neutral-700);
+  --mde-preview-table-head-background-color: var(--color-neutral-100);
+  --mde-preview-table-row-stripe-background-color: hsl(var(--hsl-neutral-500) / 5%);
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-neutral-800);
+  }
+}
