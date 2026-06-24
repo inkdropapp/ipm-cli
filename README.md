@@ -111,7 +111,7 @@ Types (`-t, --type`):
 - `theme-syntax` — an editor (CodeMirror) syntax theme.
 - `theme-preview` — a Markdown preview theme.
 
-Theme names get the matching suffix automatically (`my-theme --type theme-ui` → `my-theme-ui`). For UI themes, the light/dark appearance is read from the name when it contains `light` or `dark`, otherwise you're asked. Run `ipm init` with no name for an interactive wizard that prompts for the name, type, and (for UI themes) appearance.
+Theme names get the matching suffix automatically (`my-theme --type theme-ui` → `my-theme-ui`). For every theme (ui/syntax/preview), the light/dark appearance (written to `themeAppearance` in `package.json`) is read from the name when it contains `light` or `dark`, otherwise you're asked. Run `ipm init` with no name for an interactive wizard that prompts for the name, type, and (for themes) appearance.
 
 Then follow the printed next steps, for example:
 

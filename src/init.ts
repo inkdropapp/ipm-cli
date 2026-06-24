@@ -269,7 +269,7 @@ async function runInitWizard(
 }
 
 /**
- * Resolve a UI theme's light/dark appearance: inferred from the name when it
+ * Resolve a theme's light/dark appearance: inferred from the name when it
  * contains `light` or `dark`, otherwise asked interactively (default `light`).
  */
 async function resolveAppearance(name: string, ask: Ask): Promise<'light' | 'dark'> {
@@ -298,7 +298,7 @@ async function resolveAppearance(name: string, ask: Ask): Promise<'light' | 'dar
 /**
  * Generate code scaffolding for a new Inkdrop package or theme. Writes local
  * files only — no authentication or network access. With no `name`, runs an
- * interactive wizard to collect the name and type; a UI theme whose name does
+ * interactive wizard to collect the name and type; a theme whose name does
  * not state `light`/`dark` is asked for its appearance.
  */
 export async function initCommand(options: InitOptions): Promise<void> {
@@ -336,8 +336,8 @@ export async function initCommand(options: InitOptions): Promise<void> {
       console.log(chalk.gray(`Naming it "${name}" — ${type} names end with "${suffix}".`))
     }
 
-    // UI themes carry a light/dark appearance.
-    if (type === 'theme-ui') {
+    // Every theme (ui/syntax/preview) carries a light/dark appearance.
+    if (suffix) {
       appearance = await resolveAppearance(name, ask)
     }
   } finally {

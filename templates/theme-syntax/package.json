@@ -2,11 +2,18 @@
   "name": "__package-name__",
   "version": "0.0.0",
   "theme": "syntax",
+  "themeAppearance": "__theme-appearance__",
   "description": "A short description of your syntax theme",
   "styleSheets": ["index.css"],
   "keywords": ["inkdrop", "theme"],
   "repository": "https://github.com/__package-author__/inkdrop-__package-name__",
   "author": "__package-author__",
   "license": "MIT",
+  "scripts": {
+    "prepublishOnly": "generate-palette"
+  },
+  "devDependencies": {
+    "@inkdropapp/theme-dev-helpers": "^0.5.0"
+  },
   "engines": { "inkdrop": "^6.0.0" }
 }
