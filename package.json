@@ -28,7 +28,9 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "test": "node --env-file=.env ./bin/cli.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "format": "oxfmt",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
@@ -45,10 +47,12 @@
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
+    "@vitest/coverage-v8": "4.1.9",
     "oxfmt": "0.54.0",
     "oxlint": "1.69.0",
     "tsdown": "^0.22.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "4.1.9"
   },
   "engines": {
     "node": ">=24.0.0"
