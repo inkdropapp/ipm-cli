@@ -1,0 +1,27 @@
+@layer theme.preview {
+  /*
+   * __package-name__ — Inkdrop Markdown preview theme.
+   *
+   * Override the CSS variables to restyle the rendered preview
+   * (links, code blocks, tables, headings, …).
+   * Check out https://github.com/inkdropapp/css/blob/main/markdown.css for available variables.
+   */
+  :root {
+    /* Links */
+    --mde-preview-link-color: var(--color-blue-600);
+
+    /* Code blocks */
+    --mde-preview-codeblock-background-color: hsl(var(--hsl-neutral-500) / 8%);
+    --mde-preview-codeblock-meta-background-color: var(--color-neutral-100);
+    --mde-preview-inline-code-text-color: var(--color-pink-600);
+    --mde-preview-inline-code-background-color: hsl(var(--hsl-neutral-500) / 8%);
+
+    /* Tables */
+    --mde-preview-table-head-text-color: var(--color-neutral-700);
+    --mde-preview-table-head-background-color: var(--color-neutral-100);
+    --mde-preview-table-row-stripe-background-color: hsl(var(--hsl-neutral-500) / 5%);
+
+    /* Headings */
+    --mde-preview-heading-color: var(--color-yellow-500);
+  }
+}

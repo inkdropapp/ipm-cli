@@ -1,6 +1,6 @@
 # __package-name__
 
-A short description of your Inkdrop **syntax (editor) theme**.
+A short description of your Inkdrop **theme** — a single theme that styles the app UI, the editor syntax, and the Markdown preview.
 
 ![Screenshot of __package-name__](./docs/screenshot.png)
 
@@ -20,7 +20,13 @@ Then enable it in **Preferences → Themes**.
 ## Development
 
 ```sh
+npm install
 ipm link   # symlink into your Inkdrop data dir for local testing
 ```
 
-Edit `styles/index.css`, then reload Inkdrop to see your changes.
+Edit the stylesheets in `styles/` — `ui.css` (app chrome), `syntax.css` (editor),
+and `preview.css` (Markdown preview), each wrapped in its `@layer` — then reload
+Inkdrop to see your changes.
+
+`palette.json` is generated automatically on publish — `ipm publish` runs
+`generate-palette` via the `prepublishOnly` script, so you don't commit it by hand.

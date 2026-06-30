@@ -51,68 +51,52 @@ describe('initCommand', () => {
     expect(pkg.scripts.build).toBe('tsdown')
   })
 
-  it('appends the -ui suffix and infers a dark appearance from the name', async () => {
-    await initCommand({ name: join(root, 'midnight-dark'), type: 'theme-ui' })
+  it('scaffolds a theme and infers a dark appearance from the name', async () => {
+    await initCommand({ name: join(root, 'midnight-dark'), type: 'theme' })
 
-    // Suffix is appended; the un-suffixed directory is never created.
-    expect(existsSync(join(root, 'midnight-dark'))).toBe(false)
-    const dir = join(root, 'midnight-dark-ui')
+    const dir = join(root, 'midnight-dark')
     const pkg = readJson(join(dir, 'package.json'))
-    expect(pkg.theme).toBe('ui')
+    expect(pkg.theme).toBe(true)
     expect(pkg.themeAppearance).toBe('dark')
-    expect(existsSync(join(dir, 'styles', 'theme.css'))).toBe(true)
+    // A unified theme ships ui / syntax / preview stylesheets.
+    expect(existsSync(join(dir, 'styles', 'ui.css'))).toBe(true)
+    expect(existsSync(join(dir, 'styles', 'syntax.css'))).toBe(true)
+    expect(existsSync(join(dir, 'styles', 'preview.css'))).toBe(true)
+    // All placeholders are resolved.
+    expect(readFileSync(join(dir, 'package.json'), 'utf-8')).not.toContain('__')
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('gives a preview theme an inferred appearance without any network call', async () => {
-    await initCommand({ name: join(root, 'ocean-dark'), type: 'theme-preview' })
+  it('infers a light appearance from the name', async () => {
+    await initCommand({ name: join(root, 'solar-light'), type: 'theme' })
 
-    const dir = join(root, 'ocean-dark-preview')
-    const pkg = readJson(join(dir, 'package.json'))
-    expect(pkg.theme).toBe('preview')
-    expect(pkg.themeAppearance).toBe('dark')
-    expect(existsSync(join(dir, 'styles', 'index.css'))).toBe(true)
-    expect(fetchMock).not.toHaveBeenCalled()
-  })
-
-  it('infers a light appearance and overwrites a syntax theme stylesheet with the fetched example', async () => {
-    fetchMock = vi.fn(() =>
-      Promise.resolve({ ok: true, status: 200, text: () => Promise.resolve('/* fetched */') })
-    )
-    vi.stubGlobal('fetch', fetchMock)
-
-    await initCommand({ name: join(root, 'solar-light'), type: 'theme-syntax' })
-
-    const dir = join(root, 'solar-light-syntax')
-    const pkg = readJson(join(dir, 'package.json'))
-    expect(pkg.theme).toBe('syntax')
+    const pkg = readJson(join(root, 'solar-light', 'package.json'))
+    expect(pkg.theme).toBe(true)
     expect(pkg.themeAppearance).toBe('light')
-    expect(fetchMock).toHaveBeenCalledTimes(1)
-    expect(readFileSync(join(dir, 'styles', 'index.css'), 'utf-8')).toBe('/* fetched */')
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('skips the example download when a custom --template is given', async () => {
+  it('uses a custom --template directory', async () => {
     const customDir = join(root, '_tmpl')
     mkdirSync(join(customDir, 'styles'), { recursive: true })
     writeFileSync(
       join(customDir, 'package.json'),
       JSON.stringify({
         name: '__package-name__',
-        theme: 'syntax',
+        theme: true,
         themeAppearance: '__theme-appearance__'
       })
     )
-    writeFileSync(join(customDir, 'styles', 'index.css'), '/* custom */')
+    writeFileSync(join(customDir, 'styles', 'ui.css'), '/* custom */')
 
     await initCommand({
       name: join(root, 'custom-dark'),
-      type: 'theme-syntax',
+      type: 'theme',
       template: customDir
     })
 
-    const dir = join(root, 'custom-dark-syntax')
-    expect(fetchMock).not.toHaveBeenCalled()
-    expect(readFileSync(join(dir, 'styles', 'index.css'), 'utf-8')).toBe('/* custom */')
+    const dir = join(root, 'custom-dark')
+    expect(readFileSync(join(dir, 'styles', 'ui.css'), 'utf-8')).toBe('/* custom */')
     expect(readJson(join(dir, 'package.json')).themeAppearance).toBe('dark')
   })
 

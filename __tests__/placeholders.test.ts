@@ -69,6 +69,6 @@ describe('replaceCurrentYearPlaceholders', () => {
 
 describe('TEMPLATE_TYPES', () => {
   it('lists the supported scaffolds', () => {
-    expect(TEMPLATE_TYPES).toEqual(['package', 'theme-ui', 'theme-syntax', 'theme-preview'])
+    expect(TEMPLATE_TYPES).toEqual(['package', 'theme'])
   })
 })

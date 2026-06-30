@@ -91,7 +91,7 @@ export async function main() {
   program
     .command('init [name]')
     .description('Scaffold a new package or theme (omit name for an interactive wizard)')
-    .option('-t, --type <type>', 'package | theme-ui | theme-syntax | theme-preview', 'package')
+    .option('-t, --type <type>', 'package | theme', 'package')
     .option('--template <path>', 'Path to a custom template')
     .action(async (name: string | undefined, options: { type: string; template?: string }) => {
       // `init` only writes local files — no authentication required.

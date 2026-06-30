@@ -1,0 +1,36 @@
+@layer theme.ui {
+  /*
+   * __package-name__ — Inkdrop UI theme.
+   *
+   * Override Inkdrop's semantic CSS variables to restyle the app chrome (page,
+   * sidebar, note list, editor, inputs, …).
+   * Check out https://github.com/inkdropapp/css/blob/main/ui.css for available variables.
+   */
+  :root {
+    /* Brand */
+    --primary-color: var(--color-blue-500);
+
+    /* Page */
+    --page-background: var(--color-neutral-50);
+    --text-color: var(--color-neutral-600);
+
+    /* Links */
+    --link-hover-color: var(--color-blue-700);
+
+    /* Borders — a token with alpha via the --hsl-* companion */
+    --border-color: hsl(var(--hsl-neutral-500) / 15%);
+
+    /* Inputs */
+    --input-background: var(--color-neutral-100);
+    --input-focus-border-color: var(--color-blue-500);
+
+    /* Sidebar */
+    --sidebar-background: var(--color-neutral-100);
+
+    /* Note list */
+    --note-list-bar-background: var(--color-neutral-50);
+
+    /* Editor */
+    --editor-background: var(--color-neutral-50);
+  }
+}

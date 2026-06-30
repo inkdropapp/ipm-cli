@@ -45,33 +45,33 @@ afterEach(() => {
 
 describe('init wizard (no name given)', () => {
   it('prompts for name, a type chosen by number, then a dark appearance', async () => {
-    // 3 = theme-syntax, 2 = dark
-    const { close } = scriptPrompter([join(root, 'wiz'), '3', '2'])
+    // 2 = theme, 2 = dark
+    const { close } = scriptPrompter([join(root, 'wiz'), '2', '2'])
 
     await initCommand({})
 
-    const pkg = readJson(join(root, 'wiz-syntax', 'package.json'))
-    expect(pkg.theme).toBe('syntax')
+    const pkg = readJson(join(root, 'wiz', 'package.json'))
+    expect(pkg.theme).toBe(true)
     expect(pkg.themeAppearance).toBe('dark')
     expect(close).toHaveBeenCalled()
   })
 
   it('re-prompts on an empty name, accepts a type chosen by name', async () => {
-    // '' is rejected, then the path; 'theme-ui' by name; '1' = light
-    scriptPrompter(['', join(root, 'wiz2'), 'theme-ui', '1'])
+    // '' is rejected, then the path; 'theme' by name; '1' = light
+    scriptPrompter(['', join(root, 'wiz2'), 'theme', '1'])
 
     await initCommand({})
 
-    expect(readJson(join(root, 'wiz2-ui', 'package.json')).themeAppearance).toBe('light')
+    expect(readJson(join(root, 'wiz2', 'package.json')).themeAppearance).toBe('light')
   })
 
   it('falls back to the default type on an empty type answer', async () => {
-    // empty type answer accepts the default passed in (theme-preview); 2 = dark
+    // empty type answer accepts the default passed in (theme); 2 = dark
     scriptPrompter([join(root, 'wiz3'), '', '2'])
 
-    await initCommand({ type: 'theme-preview' })
+    await initCommand({ type: 'theme' })
 
-    expect(readJson(join(root, 'wiz3-preview', 'package.json')).themeAppearance).toBe('dark')
+    expect(readJson(join(root, 'wiz3', 'package.json')).themeAppearance).toBe('dark')
   })
 
   it('re-prompts on an unknown type, and a package needs no appearance', async () => {
@@ -90,16 +90,16 @@ describe('appearance prompt (name lacks light/dark)', () => {
   it('defaults to light on an empty answer', async () => {
     scriptPrompter([''])
 
-    await initCommand({ name: join(root, 'plain'), type: 'theme-preview' })
+    await initCommand({ name: join(root, 'plain'), type: 'theme' })
 
-    expect(readJson(join(root, 'plain-preview', 'package.json')).themeAppearance).toBe('light')
+    expect(readJson(join(root, 'plain', 'package.json')).themeAppearance).toBe('light')
   })
 
   it('re-prompts on an invalid answer, then accepts "dark"', async () => {
     scriptPrompter(['maybe', 'dark'])
 
-    await initCommand({ name: join(root, 'plain2'), type: 'theme-ui' })
+    await initCommand({ name: join(root, 'plain2'), type: 'theme' })
 
-    expect(readJson(join(root, 'plain2-ui', 'package.json')).themeAppearance).toBe('dark')
+    expect(readJson(join(root, 'plain2', 'package.json')).themeAppearance).toBe('dark')
   })
 })

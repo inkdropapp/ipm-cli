@@ -1,10 +1,10 @@
 {
   "name": "__package-name__",
   "version": "0.0.0",
-  "theme": "syntax",
+  "theme": true,
   "themeAppearance": "__theme-appearance__",
-  "description": "A short description of your syntax theme",
-  "styleSheets": ["index.css"],
+  "description": "A short description of your theme",
+  "styleSheets": ["ui.css", "syntax.css", "preview.css"],
   "keywords": ["inkdrop", "theme"],
   "repository": "https://github.com/__package-author__/inkdrop-__package-name__",
   "author": "__package-author__",

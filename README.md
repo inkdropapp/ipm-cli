@@ -91,9 +91,8 @@ ipm remove <package-name>
 # Create a plugin in ./my-plugin (default type is `package`)
 ipm init my-plugin
 
-# Create a theme — theme-ui, theme-syntax, or theme-preview
-ipm init my-theme --type theme-ui
-ipm init my-theme -t theme-syntax
+# Create a theme
+ipm init my-theme --type theme
 
 # Use a custom template directory
 ipm init my-plugin --template /path/to/template
@@ -107,11 +106,9 @@ Generates code scaffolding for a new Inkdrop **package** or **theme** in a new `
 Types (`-t, --type`):
 
 - `package` (default) — a TypeScript plugin built with [tsdown](https://tsdown.dev/) and typed with [`@inkdropapp/types`](https://github.com/inkdropapp/types).
-- `theme-ui` — a UI (app chrome) theme. Ships `@inkdropapp/theme-dev-helpers`; `ipm publish` runs `generate-palette` to emit `palette.json`.
-- `theme-syntax` — an editor (CodeMirror) syntax theme.
-- `theme-preview` — a Markdown preview theme.
+- `theme` — a single theme that styles the app UI, the editor (CodeMirror) syntax, and the Markdown preview. Ships `styles/{ui,syntax,preview}.css` (each wrapped in its `@layer`) and `@inkdropapp/theme-dev-helpers`; `ipm publish` runs `generate-palette` to emit `palette.json`.
 
-Theme names get the matching suffix automatically (`my-theme --type theme-ui` → `my-theme-ui`). For every theme (ui/syntax/preview), the light/dark appearance (written to `themeAppearance` in `package.json`) is read from the name when it contains `light` or `dark`, otherwise you're asked. Run `ipm init` with no name for an interactive wizard that prompts for the name, type, and (for themes) appearance.
+A theme's light/dark appearance (written to `themeAppearance` in `package.json`) is read from the name when it contains `light` or `dark`, otherwise you're asked. Run `ipm init` with no name for an interactive wizard that prompts for the name, type, and (for a theme) appearance.
 
 Then follow the printed next steps, for example:
 
