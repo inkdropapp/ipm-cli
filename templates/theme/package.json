@@ -13,7 +13,7 @@
     "prepublishOnly": "generate-palette"
   },
   "devDependencies": {
-    "@inkdropapp/theme-dev-helpers": "^0.6.0"
+    "@inkdropapp/theme-dev-helpers": "^0.6.1"
   },
   "engines": { "inkdrop": "^6.0.0" }
 }
