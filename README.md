@@ -288,7 +288,7 @@ npm run build
 Watch for changes and rebuild automatically:
 
 ```bash
-npm run dev
+npm run watch
 ```
 
 ### Code Quality
@@ -310,7 +310,7 @@ npm run typecheck
 ### Testing a command manually
 
 ```bash
-dotenv run ./bin/cli.js <command> [options]
+npm run dev <command> [options]
 ```
 
 ## How It Works

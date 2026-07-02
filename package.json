@@ -27,7 +27,8 @@
   "main": "lib/index.mjs",
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --watch",
+    "dev": "node --env-file=.env ./bin/cli.js",
+    "watch": "tsdown --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
