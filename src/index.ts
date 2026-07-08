@@ -7,6 +7,7 @@ import { Command } from 'commander'
 
 import { getAccessToken, openAccessKeyPage, saveAccessToken } from './auth.js'
 import { INKDROP_ACCESS_KEY_URI } from './consts.js'
+import { formatError } from './errors.js'
 import { initCommand } from './init.js'
 import { prompt } from './input.js'
 import { getIPM } from './ipm.js'
@@ -56,7 +57,7 @@ async function configure() {
     console.log(chalk.green('\n✓ Access token saved successfully!'))
     console.log('You can now use the Inkdrop CLI.')
   } catch (error) {
-    console.error(chalk.red('Error saving access token:'), error)
+    console.error(chalk.red('Error saving access token:'), formatError(error))
     process.exit(1)
   }
 }
@@ -122,7 +123,7 @@ export async function main() {
           )
         }
       } catch (error) {
-        console.error(chalk.red('Failed to fetch installed packages:'), error)
+        console.error(chalk.red('Failed to fetch installed packages:'), formatError(error))
         process.exit(1)
       }
     })
@@ -150,7 +151,7 @@ export async function main() {
           )
         }
       } catch (error) {
-        console.error(chalk.red('Failed to check outdated packages:'), error)
+        console.error(chalk.red('Failed to check outdated packages:'), formatError(error))
         process.exit(1)
       }
     })
@@ -180,7 +181,7 @@ export async function main() {
         await ipm.install(name, version)
         console.log(chalk.green(`✓ Successfully installed ${name}${versionStr}`))
       } catch (error) {
-        console.error(chalk.red(`Failed to install ${packageName}:`), error)
+        console.error(chalk.red(`Failed to install ${packageName}:`), formatError(error))
         process.exit(1)
       }
     })
@@ -209,7 +210,7 @@ export async function main() {
         await ipm.update(name, version)
         console.log(chalk.green(`✓ Successfully updated ${name}${versionStr}`))
       } catch (error) {
-        console.error(chalk.red(`Failed to update ${packageName}:`), error)
+        console.error(chalk.red(`Failed to update ${packageName}:`), formatError(error))
         process.exit(1)
       }
     })
@@ -231,7 +232,7 @@ export async function main() {
           console.warn(chalk.yellow(`Package ${packageName} was not installed`))
         }
       } catch (error) {
-        console.error(chalk.red(`Failed to uninstall ${packageName}:`), error)
+        console.error(chalk.red(`Failed to uninstall ${packageName}:`), formatError(error))
         process.exit(1)
       }
     })
@@ -255,7 +256,7 @@ export async function main() {
         })
         console.log(chalk.green(`✓ ${targetPath}`))
       } catch (error) {
-        console.error(chalk.red('Failed to link package:'), error)
+        console.error(chalk.red('Failed to link package:'), formatError(error))
         process.exit(1)
       }
     })
@@ -297,7 +298,7 @@ export async function main() {
             ` to read more about them.`
         )
       } catch (error) {
-        console.error(chalk.red('Search failed:'), error)
+        console.error(chalk.red('Search failed:'), formatError(error))
         process.exit(1)
       }
     })
@@ -326,7 +327,7 @@ export async function main() {
           console.log(`└── Supported Inkdrop version: ${info.metadata.engines.inkdrop}`)
         }
       } catch (error) {
-        console.error(chalk.red(`Failed to fetch package info:`), error)
+        console.error(chalk.red(`Failed to fetch package info:`), formatError(error))
         process.exit(1)
       }
     })
@@ -359,7 +360,7 @@ export async function main() {
           console.log(chalk.green('✓ Package published successfully!'))
         }
       } catch (error) {
-        console.error(chalk.red('Failed to publish package:'), error)
+        console.error(chalk.red('Failed to publish package:'), formatError(error))
         process.exit(1)
       }
     })
@@ -402,7 +403,7 @@ export async function main() {
         await ipm.unpublish(name, version ? { version } : undefined)
         console.log(chalk.green(`✓ Successfully unpublished ${name}${versionStr}`))
       } catch (error) {
-        console.error(chalk.red(`Failed to unpublish ${packageName}:`), error)
+        console.error(chalk.red(`Failed to unpublish ${packageName}:`), formatError(error))
         process.exit(1)
       }
     })

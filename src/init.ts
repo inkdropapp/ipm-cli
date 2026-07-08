@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import chalk from 'chalk'
 
+import { formatError } from './errors.js'
 import { createPrompter } from './input.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -314,7 +315,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
       extraReplacements
     )
   } catch (error) {
-    console.error(chalk.red('Failed to generate scaffolding:'), error)
+    console.error(chalk.red('Failed to generate scaffolding:'), formatError(error))
     process.exit(1)
   }
 
