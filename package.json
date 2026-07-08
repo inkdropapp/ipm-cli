@@ -39,7 +39,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@inkdropapp/ipm": "^1.1.0",
+    "@inkdropapp/ipm": "^1.1.1",
     "@inkdropapp/logger": "^4.0.0",
     "@napi-rs/keyring": "^1.3.0",
     "chalk": "^5.6.2",
