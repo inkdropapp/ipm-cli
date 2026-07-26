@@ -149,20 +149,8 @@ Creates a symlink from the Inkdrop packages directory to a local package directo
 #### Search for packages
 
 ```bash
-# Basic search
 ipm search <query>
-
-# Search with sorting
-ipm search <query> --sort recency
-ipm search <query> -s score -d desc
 ```
-
-Available sort options:
-
-- `score` - Relevance score (default)
-- `majority` - Most popular
-- `recency` - Recently updated
-- `newness` - Recently published
 
 #### Show package information
 
@@ -199,6 +187,34 @@ It is recommended to use [`npm version`](https://docs.npmjs.com/cli/v11/commands
 npm version patch
 ipm publish
 ```
+
+##### Choosing which files get published
+
+By default the whole package directory is published, apart from a built-in denylist
+(`node_modules`, `.git`, `.env`, `coverage`, `*.log`, …). To publish only a subset —
+for example your build output but not your sources — declare a `files` allowlist in
+`package.json`, the same way you would for npm:
+
+```json
+{
+  "files": ["lib", "styles"]
+}
+```
+
+- Listed directories are packed recursively.
+- Glob patterns (`dist/**`, `*.css`) and `!` negations are supported, and the last
+  matching pattern wins.
+- Globs follow standard shell/`.gitignore` semantics, so a leading `*` does not match
+  dotfiles. Dotfiles are packed when named explicitly (`.babelrc`) or when they sit
+  inside an allowlisted directory.
+- `package.json`, `README*`, `LICENSE*`/`LICENCE*` and the `main` entry point are
+  always packed, even if the allowlist omits them.
+- The built-in denylist still applies, so an allowlisted directory cannot leak a
+  nested `.env` or `*.log`.
+- An empty or malformed `files` value is ignored and everything is packed, since
+  publishing an empty plugin would break every user who installs it.
+
+Use `ipm publish --dry-run` to check what a publish would do before running it for real.
 
 #### Unpublish a package
 

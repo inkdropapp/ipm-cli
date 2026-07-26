@@ -132,5 +132,5 @@ export function formatError(error: unknown): string {
     responseMessage ?? (error instanceof Error ? error.message || String(error) : String(error))
 
   const request = httpError && getRequestSummary(httpError)
-  return request ? `${message}\n(${request})` : message
+  return request ? `${message} (${request})` : message
 }

@@ -264,18 +264,14 @@ export async function main() {
   program
     .command('search <query>')
     .description('Search for packages')
-    .option('-s, --sort <sort>', 'Sort order (score, majority, recency, newness)')
-    .option('-d, --direction <direction>', 'Sort direction (asc, desc)')
-    .action(async (query: string, options: { sort?: string; direction?: string }) => {
+    .action(async (query: string) => {
       await ensureAuthenticated()
       const ipm = getIPM()
 
       try {
         console.log(chalk.cyan(`Searching for "${query}"...`))
         const results = await ipm.registry.search({
-          q: query,
-          sort: options.sort as any,
-          direction: options.direction
+          q: query
         })
 
         if (results.length === 0) {
