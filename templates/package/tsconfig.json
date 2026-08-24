@@ -15,7 +15,6 @@
     "jsx": "react-jsx",
 
     /* @inkdropapp/types wiring: global `inkdrop` + the `'inkdrop'` module */
-    "paths": { "inkdrop": ["./node_modules/@inkdropapp/types/src/inkdrop-module/index.d.ts"] },
     "types": ["@inkdropapp/types"],
 
     /* Linting */
