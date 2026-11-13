@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This repository has moved to [inkdropapp/plugins](https://github.com/inkdropapp/plugins): [`libs/ipm-cli`](https://github.com/inkdropapp/plugins/tree/main/libs/ipm-cli). It is archived and read-only; please open issues and pull requests there.
+
 # @inkdropapp/ipm-cli
 
 The CLI tool for managing [Inkdrop](https://www.inkdrop.app/) plugins and themes.
